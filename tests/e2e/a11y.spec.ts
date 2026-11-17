@@ -109,9 +109,10 @@ test.describe('Clavier et noms accessibles', () => {
     await expect(sheetPanel(page, link(IDS.link).title)).toBeVisible();
   });
 
-  test('C61 — nœuds et liens ont un nom accessible explicite', async ({ page }) => {
+  test('C61 — nœuds et liens ont un nom accessible explicite', async ({ page }, testInfo) => {
     await seedProgress(page, { read: [IDS.concept] });
-    await openMap(page);
+    // Sur mobile, seules les étiquettes des liens du nœud au centre sont affichées (C25)
+    await openMap(page, isMobile(testInfo) ? `/carte/${link(IDS.link).target}` : '/carte');
     await expect(mapNode(page, IDS.concept)).toHaveAccessibleName(`${sheet(IDS.concept).title}, concept, lu`);
     await expect(mapNode(page, IDS.sector)).toHaveAccessibleName(`${sheet(IDS.sector).title}, secteur, non lu`);
     await expect(mapNode(page, 'concepts')).toHaveAccessibleName(/^Concepts, branche/);
