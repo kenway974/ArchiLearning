@@ -950,9 +950,9 @@ pre {
   background: var(--surface);
   color: var(--text);
   text-align: center;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.15;
   cursor: pointer;
   transition:
     background 0.15s,
@@ -978,11 +978,7 @@ pre {
   border-color: var(--sector);
   background: var(--sector-soft);
 }
-.map-node[data-dimmed='true'] {
-  background: var(--dim-bg);
-  border-color: var(--dim-border);
-  color: var(--dim-text);
-}
+
 .map-node[aria-current='true'],
 .map-node[data-focused='true'] {
   box-shadow: 0 0 0 4px var(--accent-soft);
@@ -1029,8 +1025,9 @@ pre {
 }
 .map-edge-link {
   stroke: var(--edge-link);
-  stroke-width: 1.6;
+  stroke-width: 1.4;
   stroke-dasharray: 6 5;
+  opacity: 0.45;
 }
 .map-edge-tree.dimmed,
 .map-edge-link.dimmed {
@@ -1040,13 +1037,14 @@ pre {
   stroke: var(--accent);
   stroke-width: 3;
   stroke-dasharray: none;
+  opacity: 1;
 }
 .map-link-label {
   position: absolute;
   pointer-events: all;
   display: inline-flex;
   align-items: center;
-  max-width: 170px;
+  max-width: 220px;
   min-height: 30px;
   padding: 2px 10px;
   border: 1px solid var(--edge-link);
@@ -1062,37 +1060,21 @@ pre {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.map-link-dot {
-  display: none;
-}
-/* Ordinateur : pastille compacte, titre au survol ou au focus clavier */
-.map-link-label.compact {
-  justify-content: center;
-  min-width: 26px;
-  min-height: 26px;
-  padding: 0;
-}
-.map-link-label.compact .map-link-dot {
-  display: inline;
-}
-.map-link-label.compact .map-link-title {
-  display: none;
-}
-.map-link-label.compact:hover,
-.map-link-label.compact:focus-visible {
-  padding: 2px 10px;
-  z-index: 4;
-}
-.map-link-label.compact:hover .map-link-dot,
-.map-link-label.compact:focus-visible .map-link-dot {
-  display: none;
-}
-.map-link-label.compact:hover .map-link-title,
-.map-link-label.compact:focus-visible .map-link-title {
-  display: inline;
-}
 .map-link-label.concealed {
+  opacity: 0;
+  pointer-events: none;
+}
+/* Une étiquette masquée reste atteignable au clavier et apparaît quand elle reçoit le focus */
+.map-link-label.concealed:focus-visible {
+  opacity: 1;
+  pointer-events: all;
+}
+.map-node[data-hidden='true'] {
   visibility: hidden;
+}
+/* Mode focus mobile : les nœuds glissent vers leur nouvelle place */
+.map-mobile .react-flow__node {
+  transition: transform 0.4s ease;
 }
 .map-link-label.dimmed {
   border-color: var(--dim-border);
@@ -1301,4 +1283,106 @@ pre {
 .map-canvas .react-flow,
 .map-canvas .react-flow__pane {
   touch-action: none;
+}
+
+/* ---------- Familles et principes ---------- */
+.map-node[data-type='family'] {
+  background: var(--surface);
+  border-style: dashed;
+  border-color: var(--text-muted);
+}
+.map-node[data-type='principles'] {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 15px;
+}
+.map-node[data-type='principle'] {
+  background: var(--surface);
+  border-color: var(--border);
+  padding-left: 30px;
+  font-size: 16px;
+}
+.map-node-color {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin-top: -6px;
+  border-radius: 50%;
+}
+.map-node-badges {
+  display: flex;
+  gap: 5px;
+  margin-top: 5px;
+}
+.map-badge {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid var(--surface);
+}
+.map-node[data-dimmed='true'] .map-badge,
+.map-node[data-dimmed='true'] .map-node-color {
+  opacity: 0.35;
+}
+.map-edge-principle {
+  stroke-width: 2;
+  opacity: 0.55;
+}
+.map-edge-principle.dimmed {
+  opacity: 0.08;
+}
+.map-edge-principle.highlighted {
+  stroke-width: 3.5;
+  opacity: 1;
+}
+.principle-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+.principle-list,
+.applications {
+  list-style: none;
+  padding: 0;
+}
+.principle-list li {
+  margin: 0.5em 0;
+}
+.principle-list a {
+  font-weight: 700;
+}
+.applications li {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.applications a {
+  font-weight: 700;
+}
+.applications p {
+  margin: 4px 0 0;
+}
+
+/* ---------- Page « terrain » ---------- */
+.terrain {
+  display: grid;
+  gap: 16px;
+  margin: 24px 0;
+}
+.terrain-card h2 {
+  margin-top: 0;
+}
+
+/* Estompage : déclaré en dernier et plus spécifique, il l'emporte sur les styles par type */
+.map-node[data-type][data-dimmed='true'] {
+  background: var(--dim-bg);
+  border-color: var(--dim-border);
+  color: var(--dim-text);
 }

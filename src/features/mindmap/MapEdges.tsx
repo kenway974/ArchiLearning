@@ -3,22 +3,41 @@ import { EdgeLabelRenderer, useStore, type Edge, type EdgeProps } from '@xyflow/
 type Point = { x: number; y: number };
 
 export type TreeEdgeData = { from: Point; to: Point; dimmed: boolean };
+export type PrincipleEdgeData = TreeEdgeData & { color: string; highlighted: boolean };
 export type LinkEdgeData = TreeEdgeData & {
   title: string;
   /** Position de l'étiquette le long du lien (0 = départ, 1 = arrivée). */
   labelAt: number;
   highlighted: boolean;
-  /** Mode focus mobile : seules les étiquettes des liens du nœud au centre sont affichées. */
+  /** Mode focus mobile : seules les étiquettes des liens du nœud au centre existent. */
   labelHidden: boolean;
-  /** Mobile, panneau ouvert : étiquette présente mais invisible (la fiche liste déjà ses relations). */
+  /** Étiquette invisible (mais atteignable au clavier) : liens du nœud survolé ou ouvert seulement. */
   labelConcealed: boolean;
-  /** Ordinateur : pastille compacte, le titre apparaît au survol ou au focus. */
-  compact: boolean;
+  /** Position imposée de l'étiquette (mode focus mobile : juste au-dessus du nœud relié). */
+  labelPos: Point | null;
+  onLabelHover: (inside: boolean) => void;
   onActivate: (id: string) => void;
 };
 
 export type TreeFlowEdge = Edge<TreeEdgeData, 'tree'>;
 export type LinkFlowEdge = Edge<LinkEdgeData, 'link'>;
+export type PrincipleFlowEdge = Edge<PrincipleEdgeData, 'principle'>;
+
+/** Ligne d'un principe vers un concept qui l'applique, de la couleur du principe. */
+export function PrincipleEdge({ data }: EdgeProps<PrincipleFlowEdge>) {
+  if (!data) return null;
+  const { from, to } = data;
+  const midX = (from.x + to.x) / 2;
+  const state = data.highlighted ? 'highlighted' : data.dimmed ? 'dimmed' : '';
+  return (
+    <path
+      className={`map-edge-principle ${state}`}
+      d={`M ${from.x} ${from.y} C ${midX} ${from.y}, ${midX} ${to.y}, ${to.x} ${to.y}`}
+      fill="none"
+      style={{ stroke: data.color }}
+    />
+  );
+}
 
 export function TreeEdge({ data }: EdgeProps<TreeFlowEdge>) {
   if (!data) return null;
@@ -48,11 +67,10 @@ export function LinkEdge({ id, data }: EdgeProps<LinkFlowEdge>) {
   const dy = to.y - from.y;
   // Courbe légère pour ne pas traverser les nœuds alignés
   const control = { x: (from.x + to.x) / 2 - dy * 0.15, y: (from.y + to.y) / 2 + dx * 0.15 };
-  const label = quad(from, control, to, data.labelAt);
+  const label = data.labelPos ?? quad(from, control, to, data.labelAt);
   const scale = Math.max(1, 1 / zoom);
   const state = [
     data.highlighted ? 'highlighted' : data.dimmed ? 'dimmed' : '',
-    data.compact ? 'compact' : '',
     data.labelConcealed ? 'concealed' : '',
   ].join(' ');
 
@@ -75,10 +93,9 @@ export function LinkEdge({ id, data }: EdgeProps<LinkFlowEdge>) {
           title={data.title}
           style={{ transform: `translate(-50%, -50%) translate(${label.x}px, ${label.y}px) scale(${scale})` }}
           onClick={() => data.onActivate(id)}
+          onMouseEnter={() => data.onLabelHover(true)}
+          onMouseLeave={() => data.onLabelHover(false)}
         >
-          <span className="map-link-dot" aria-hidden="true">
-            ↔
-          </span>
           <span className="map-link-title">{data.title}</span>
         </button>
       </EdgeLabelRenderer>

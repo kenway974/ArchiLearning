@@ -50,24 +50,30 @@ export function BottomSheet({
     ref.current?.scrollTo({ top: 0 });
   }, [titleId]);
 
+  const lastY = useRef<number | null>(null);
   const onTouchStart = (e: TouchEvent) => {
     const touch = e.touches[0];
     if (!touch || !ref.current) return;
     drag.current = { startY: touch.clientY, startTop: ref.current.getBoundingClientRect().top };
+    lastY.current = touch.clientY;
   };
   const onTouchMove = (e: TouchEvent) => {
     const touch = e.touches[0];
     if (!touch || !drag.current) return;
+    lastY.current = touch.clientY;
     setDragTop(Math.max(0, drag.current.startTop + touch.clientY - drag.current.startY));
   };
+  // Le panneau se place selon l'endroit où le doigt relâche la poignée (indépendant de l'animation).
   const onTouchEnd = () => {
-    const top = dragTop;
+    const y = lastY.current;
+    const moved = drag.current !== null && y !== null && Math.abs(y - drag.current.startY) > 10;
     drag.current = null;
+    lastY.current = null;
     setDragTop(null);
-    if (top === null) return;
+    if (!moved || y === null) return;
     const h = window.innerHeight;
-    if (top > h * 0.8) onClose();
-    else if (top < h * 0.3) onSnap('full');
+    if (y > h * 0.8) onClose();
+    else if (y < h * 0.3) onSnap('full');
     else onSnap('half');
   };
 
