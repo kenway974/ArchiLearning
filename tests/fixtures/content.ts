@@ -88,7 +88,11 @@ export function makeSector(overrides: SectorOverrides): SectorSheet {
       source: '// Point d’entrée\nexport const main = () => 42;',
     },
     pitfalls: ['Piège courant.'],
-    companies: [],
+    examples: [
+      { name: 'Petite Co', size: 'small', profile: 'Startup de 5 personnes.', team: '2 développeurs.', practices: ['Un seul dépôt, un seul déploiement.'] },
+      { name: 'Moyenne Co', size: 'medium', profile: 'PME de 80 personnes.', team: '3 équipes de 5 développeurs.', practices: ['Modules par domaine.'] },
+      { name: 'Grande Co', size: 'large', profile: 'Groupe de 3 000 personnes.', team: '20 équipes produit.', practices: ['Services par domaine.'] },
+    ],
     prerequisites: [],
     nextSteps: [],
     quiz: makeQuiz(),

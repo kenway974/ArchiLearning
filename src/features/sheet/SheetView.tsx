@@ -240,6 +240,25 @@ function SectorBody({ sheet }: { sheet: SectorSheet }) {
           ))}
         </div>
       </Section>
+      <Section title="Exemples d’entreprises">
+        <p className="muted">
+          Entreprises fictives : elles illustrent les pratiques courantes du secteur à chaque taille.
+        </p>
+        <div className="sizes">
+          {(Object.keys(SIZE_LABELS) as (keyof typeof SIZE_LABELS)[]).map((size) => {
+            const example = sheet.examples.find((e) => e.size === size)!;
+            return (
+              <article key={size} className="card example">
+                <p className="eyebrow">{SIZE_LABELS[size]}</p>
+                <h3>{example.name}</h3>
+                <p>{example.profile}</p>
+                <p className="muted">{example.team}</p>
+                <Bullets items={example.practices} />
+              </article>
+            );
+          })}
+        </div>
+      </Section>
       <Section title="Langage et framework">
         <p>
           <strong>{sheet.stack.framework}</strong>
@@ -255,20 +274,6 @@ function SectorBody({ sheet }: { sheet: SectorSheet }) {
       <Section title="Pièges courants">
         <Bullets items={sheet.pitfalls} />
       </Section>
-      {sheet.companies.length > 0 && (
-        <Section title="Entreprises">
-          <ul className="bullets">
-            {sheet.companies.map((c) => (
-              <li key={c.name}>
-                <strong>{c.name}</strong> : {c.fact}{' '}
-                <a href={c.source} target="_blank" rel="noreferrer">
-                  Source ({c.name})
-                </a>
-              </li>
-            ))}
-          </ul>
-        </Section>
-      )}
     </>
   );
 }

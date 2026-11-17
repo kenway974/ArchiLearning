@@ -16,14 +16,14 @@ const CONCEPT_SECTIONS = [
   'Idée de post LinkedIn',
 ];
 
-const sectorSections = (withCompanies: boolean) => [
+const SECTOR_SECTIONS = [
   'Contexte et contraintes',
   'Architecture selon la taille',
+  'Exemples d’entreprises',
   'Langage et framework',
   'Arborescence',
   'Code',
   'Pièges courants',
-  ...(withCompanies ? ['Entreprises'] : []),
   'Quiz',
   'Idée de post LinkedIn',
 ];
@@ -52,7 +52,7 @@ test.describe('Fiches', () => {
     const s = sheet(IDS.sector);
     if (s.kind !== 'sector') throw new Error('fiche secteur attendue');
     await page.goto(`/cours/${s.id}`);
-    expect(await sectionTitles(page.getByRole('main'))).toEqual(sectorSections(s.companies.length > 0));
+    expect(await sectionTitles(page.getByRole('main'))).toEqual(SECTOR_SECTIONS);
 
     const sizes = page.getByRole('region', { name: 'Architecture selon la taille' });
     for (const label of ['Petite entreprise', 'Entreprise moyenne', 'Grande entreprise']) {
@@ -61,14 +61,16 @@ test.describe('Fiches', () => {
     await expect(page.getByRole('region', { name: 'Langage et framework' })).toContainText(s.stack.framework);
   });
 
-  test('C31 — chaque entreprise citée affiche sa source', async ({ page }) => {
+  test('C31 — trois entreprises fictives illustrent les pratiques selon la taille', async ({ page }) => {
     const s = sheet(IDS.sector);
     if (s.kind !== 'sector') throw new Error('fiche secteur attendue');
-    test.skip(s.companies.length === 0, 'pas d’entreprise citée dans cette fiche');
     await page.goto(`/cours/${s.id}`);
-    const region = page.getByRole('region', { name: 'Entreprises' });
-    for (const c of s.companies) {
-      await expect(region.getByRole('link', { name: new RegExp(`Source.*${c.name}`) })).toHaveAttribute('href', c.source);
+    const region = page.getByRole('region', { name: 'Exemples d’entreprises' });
+    await expect(region).toContainText('fictives');
+    for (const example of s.examples) {
+      const card = region.getByRole('article').filter({ has: page.getByRole('heading', { level: 3, name: example.name }) });
+      await expect(card).toContainText(example.profile);
+      await expect(card).toContainText(example.practices[0]!);
     }
   });
 

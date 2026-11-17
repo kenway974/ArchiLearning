@@ -81,8 +81,22 @@ export const sectorSheetSchema = z.object({
   constraints: textList,
   bySize: z.object({ small: sizeRecoSchema, medium: sizeRecoSchema, large: sizeRecoSchema }),
   stack: z.object({ language: z.enum(LANGUAGES), framework: text, why: text }),
-  /** Entreprises réelles : seulement des faits publics, avec leur source. */
-  companies: z.array(z.object({ name: text, fact: text, source: z.string().url('source : URL attendue') })),
+  /**
+   * Entreprises fictives qui illustrent les pratiques courantes du secteur : une par taille.
+   * Ce sont des exemples types, pas des faits sur des entreprises réelles.
+   */
+  examples: z
+    .array(
+      z.object({
+        name: text,
+        size: z.enum(['small', 'medium', 'large']),
+        profile: text,
+        team: text,
+        practices: textList,
+      }),
+    )
+    .length(3, 'trois exemples : petite, moyenne, grande entreprise')
+    .refine((xs) => new Set(xs.map((x) => x.size)).size === 3, 'un exemple par taille'),
 });
 export type SectorSheet = z.infer<typeof sectorSheetSchema>;
 

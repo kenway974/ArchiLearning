@@ -25,7 +25,7 @@ function searchableText(sheet: Sheet): string {
           sheet.stack.language,
           sheet.stack.framework,
           sheet.stack.why,
-          ...sheet.companies.flatMap((c) => [c.name, c.fact]),
+          ...sheet.examples.flatMap((e) => [e.profile, e.team, ...e.practices]),
         ];
   return normalize([...common, ...specific].join(' '));
 }

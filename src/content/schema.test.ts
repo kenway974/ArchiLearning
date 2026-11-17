@@ -80,13 +80,17 @@ describe('schéma des fiches secteur', () => {
     expect(sectorSheetSchema.safeParse(sheet).success).toBe(false);
   });
 
-  test('C63 — la liste des entreprises peut être vide, mais une entreprise citée a un fait et une source', () => {
-    expect(sectorSheetSchema.safeParse(makeSector({ id: 'banque', companies: [] })).success).toBe(true);
-    const sansSource = makeSector({
-      id: 'banque',
-      companies: [{ name: 'Exemple', fact: 'Utilise Java.', source: '' }],
-    });
-    expect(sectorSheetSchema.safeParse(sansSource).success).toBe(false);
+  test('C31 — une fiche secteur a trois exemples d’entreprises : une petite, une moyenne, une grande', () => {
+    const base = makeSector({ id: 'banque' });
+    expect(sectorSheetSchema.safeParse({ ...base, examples: base.examples.slice(0, 2) }).success).toBe(false);
+    const twoSmall = base.examples.map((e) => ({ ...e, size: 'small' as const }));
+    expect(sectorSheetSchema.safeParse({ ...base, examples: twoSmall }).success).toBe(false);
+  });
+
+  test('C31 — un exemple d’entreprise sans pratiques est refusé', () => {
+    const base = makeSector({ id: 'banque' });
+    const examples = base.examples.map((e, i) => (i === 0 ? { ...e, practices: [] } : e));
+    expect(sectorSheetSchema.safeParse({ ...base, examples }).success).toBe(false);
   });
 });
 

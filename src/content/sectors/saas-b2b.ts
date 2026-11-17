@@ -116,7 +116,44 @@ export class ProjetsService {
     'Passer aux microservices pour « être prêt à grandir » avant d’avoir trouvé son marché.',
     'Les tâches lourdes (imports, exports) dans les requêtes HTTP au lieu d’une file de tâches.',
   ],
-  companies: [],
+  examples: [
+    {
+      name: 'Planifio',
+      size: 'small',
+      profile: 'Outil de planning d’équipes, 4 fondateurs, une centaine de clients.',
+      team: '2 développeurs full-stack TypeScript.',
+      practices: [
+        'Un monolithe NestJS et un front React dans le même dépôt.',
+        'Une base PostgreSQL partagée, chaque table métier porte un tenantId.',
+        'Hébergement sur une plateforme managée, déploiement à chaque fusion sur main.',
+        'Abonnements gérés par un prestataire de paiement.',
+      ],
+    },
+    {
+      name: 'Factoria',
+      size: 'medium',
+      profile: 'Logiciel de facturation pour PME, 60 salariés dont 20 développeurs.',
+      team: '4 équipes : facturation, paiements, intégrations, plateforme.',
+      practices: [
+        'Monolithe modulaire : un module par équipe, frontières vérifiées par des tests.',
+        'Authentification unique (SSO) pour les clients entreprise.',
+        'API publique versionnée, utilisée par les intégrateurs.',
+        'Imports et exports lourds dans une file de tâches, jamais dans la requête HTTP.',
+      ],
+    },
+    {
+      name: 'Orbitas',
+      size: 'large',
+      profile: 'Plateforme RH utilisée par des milliers d’entreprises, 800 salariés.',
+      team: 'Plus de 30 équipes, dont une équipe plateforme qui fournit les outils communs.',
+      practices: [
+        'Services extraits du monolithe pour la paie, les notifications et la recherche.',
+        'Communication entre services par événements.',
+        'Fonctionnalités activées progressivement par client (feature flags).',
+        'Hébergement sur plusieurs régions pour respecter la localisation des données.',
+      ],
+    },
+  ],
   prerequisites: [
     { id: 'monolithe-modulaire', reason: 'Le monolithe modulaire est l’architecture par défaut d’un SaaS qui grandit : il faut le connaître avant d’arriver ici.' },
     { id: 'architecture-evenementielle', reason: 'Notifications, intégrations et facturation réagissent à des événements du produit.' },

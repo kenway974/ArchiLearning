@@ -90,7 +90,7 @@ Les fiches ont le même contenu en pleine page (`/cours/:id`) et dans le panneau
 | N° | Comportement | Test |
 |---|---|---|
 | C30 | Une fiche concept affiche, dans cet ordre : idée en une phrase, problème résolu, quand l'utiliser, quand l'éviter, taille d'équipe et d'entreprise typique, arborescence d'exemple, extrait de code commenté, pièges, architectures voisines, quiz, idée de post LinkedIn. | E |
-| C31 | Une fiche secteur affiche : contexte et contraintes, architecture recommandée par taille (petite, moyenne, grande), langage et framework avec la justification, arborescence cliquable, extrait de code commenté, pièges courants, entreprises réelles (section absente s'il n'y en a pas), quiz, idée de post LinkedIn. | E |
+| C31 | Une fiche secteur affiche : contexte et contraintes, architecture recommandée par taille (petite, moyenne, grande), exemples d'entreprises (trois entreprises fictives, une par taille, présentées comme telles, avec leur équipe et leurs pratiques courantes), langage et framework avec la justification, arborescence cliquable, extrait de code commenté, pièges courants, quiz, idée de post LinkedIn. | U + E |
 | C32 | En haut de chaque fiche : bouton « Voir sur la mindmap » (ouvre `/carte/:id`), bouton « Comparer avec… », bouton « Marquer comme lue / non lue ». | E |
 | C33 | L'arborescence est dépliée par défaut. Cliquer (ou Entrée au clavier) sur un dossier ou un fichier affiche l'explication de son rôle ; un seul élément est expliqué à la fois. Au clavier : flèches haut/bas pour se déplacer, gauche/droite pour replier/déplier. | E |
 | C34 | Les extraits de code s'affichent avec coloration syntaxique, le nom du langage et un bouton « Copier ». | E |

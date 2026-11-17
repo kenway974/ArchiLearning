@@ -115,7 +115,44 @@ function agence_traiter_contact(): void
     'Versionner les identifiants de base de données dans le code.',
     'Choisir une architecture headless coûteuse pour cinq pages qui changent deux fois par an.',
   ],
-  companies: [],
+  examples: [
+    {
+      name: 'Atelier Copeau',
+      size: 'small',
+      profile: 'Menuiserie artisanale de 6 personnes, un site de 8 pages et un formulaire de devis.',
+      team: 'Aucun développeur interne : un freelance crée le site puis le maintient au forfait.',
+      practices: [
+        'WordPress avec un thème du marché et trois ou quatre extensions (formulaire, SEO, cache).',
+        'Hébergement mutualisé, sauvegardes automatiques chez l’hébergeur.',
+        'Le gérant modifie lui-même les textes et les photos de réalisations.',
+        'Mises à jour de WordPress et des extensions une fois par mois par le freelance.',
+      ],
+    },
+    {
+      name: 'Réseau Habitat Plus',
+      size: 'medium',
+      profile: 'Réseau de 12 agences immobilières, un site par agence et un site national.',
+      team: 'Une agence web avec 3 développeurs PHP travaille sur le projet.',
+      practices: [
+        'WordPress structuré avec Bedrock : code versionné dans Git, dépendances gérées par Composer.',
+        'Thème sur mesure partagé par toutes les agences (multisite).',
+        'Environnement de préproduction et déploiement automatique depuis la CI.',
+        'Annonces importées chaque nuit depuis le logiciel métier des agences.',
+      ],
+    },
+    {
+      name: 'Vélonova',
+      size: 'large',
+      profile: 'Fabricant de vélos présent dans 8 pays, plusieurs centaines de pages par langue.',
+      team: 'Équipe digitale interne de 15 personnes : développeurs front, rédacteurs, designers.',
+      practices: [
+        'CMS headless : les rédacteurs saisissent les contenus, un front les affiche via une API.',
+        'Site généré en statique et servi par un CDN pour tenir les pics de trafic lors des lancements.',
+        'Traductions gérées dans le CMS, une URL par langue.',
+        'Design system partagé entre le site et les autres outils de la marque.',
+      ],
+    },
+  ],
   prerequisites: [
     { id: 'mvc', reason: 'Un CMS sépare contenus, gabarits et traitement des requêtes : MVC donne les bases pour s’y retrouver.' },
   ],

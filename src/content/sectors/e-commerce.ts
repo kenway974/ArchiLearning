@@ -122,7 +122,43 @@ final class ReserverStockHandler
     'Découper en microservices avant le premier Black Friday : préparer d’abord le cache et la mise à l’échelle du catalogue.',
     'Ne pas vérifier la signature des webhooks de paiement.',
   ],
-  companies: [],
+  examples: [
+    {
+      name: 'Thé des Collines',
+      size: 'small',
+      profile: 'Boutique de thés en ligne, 3 salariés, quelques centaines de commandes par mois.',
+      team: 'Pas de développeur : la fondatrice gère la boutique, un freelance intervient ponctuellement.',
+      practices: [
+        'Solution SaaS e-commerce : catalogue, paiement et hébergement fournis.',
+        'Un thème du marché personnalisé, quelques applications (avis clients, e-mails).',
+        'Expéditions préparées à la main à partir des commandes du jour.',
+      ],
+    },
+    {
+      name: 'Outilpro',
+      size: 'medium',
+      profile: 'Distributeur d’outillage, 80 salariés, vend aux particuliers et aux professionnels.',
+      team: '6 développeurs PHP en interne, organisés en une seule équipe.',
+      practices: [
+        'Boutique Sylius sur Symfony, organisée en modules : catalogue, commandes, stock, paiement.',
+        'Tarifs professionnels et remises par client calculés dans le module de prix.',
+        'Tâches lentes (factures, e-mails, envoi à l’ERP) en file asynchrone avec Symfony Messenger.',
+        'Moteur de recherche dédié pour le catalogue et cache devant les pages produits.',
+      ],
+    },
+    {
+      name: 'Maisonéo',
+      size: 'large',
+      profile: 'Enseigne d’équipement de la maison, 3 000 salariés, site, application et magasins.',
+      team: '10 équipes produit, chacune responsable d’un domaine (catalogue, panier, livraison…).',
+      practices: [
+        'Catalogue et recherche séparés des commandes, mis à l’échelle indépendamment.',
+        'Commandes, stock et livraison échangent des événements via un broker de messages.',
+        'Stock unifié entre site, magasins et marketplaces.',
+        'Tests de charge avant chaque période de soldes et de fêtes.',
+      ],
+    },
+  ],
   prerequisites: [
     { id: 'monolithe-modulaire', reason: 'Une boutique sur mesure est d’abord un monolithe à bien découper en modules : catalogue, commandes, stock, paiement.' },
     { id: 'mvc', reason: 'Le front d’une boutique Symfony est une application MVC classique.' },

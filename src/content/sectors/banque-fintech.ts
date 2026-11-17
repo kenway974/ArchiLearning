@@ -128,7 +128,44 @@ public final class Compte {
     'Laisser le code métier dépendre directement de l’API d’un partenaire bancaire ou d’un système central.',
     'Réécrire le système central d’un coup au lieu de le remplacer progressivement, domaine par domaine.',
   ],
-  companies: [],
+  examples: [
+    {
+      name: 'Kapio',
+      size: 'small',
+      profile: 'Compte pro pour indépendants, 15 salariés, s’appuie sur une banque partenaire.',
+      team: '6 développeurs Kotlin et Spring.',
+      practices: [
+        'Tenue des comptes déléguée à un partenaire bancaire (Banking as a Service).',
+        'Monolithe modulaire au cœur hexagonal : l’API du partenaire est un adaptateur derrière un port.',
+        'Vérification d’identité des clients confiée à un prestataire spécialisé.',
+        'Clé d’idempotence sur chaque virement envoyé au partenaire.',
+      ],
+    },
+    {
+      name: 'Crédisol',
+      size: 'medium',
+      profile: 'Établissement de paiement, 200 salariés, cartes et virements pour des PME.',
+      team: '8 équipes, dont une équipe conformité et une équipe sécurité.',
+      practices: [
+        'Modules par domaine : comptes, paiements, cartes, conformité.',
+        'Grand livre en Event Sourcing : chaque opération est un événement conservé.',
+        'API ouverte aux agrégateurs, conformément à DSP2.',
+        'Contrôles anti-blanchiment déclenchés par les événements de paiement.',
+      ],
+    },
+    {
+      name: 'Banque Hexa',
+      size: 'large',
+      profile: 'Banque régionale historique, 5 000 salariés, plusieurs millions de clients.',
+      team: 'Des dizaines d’équipes, en interne et chez des prestataires.',
+      practices: [
+        'Système central ancien (mainframe) conservé pour la tenue de comptes.',
+        'Nouveaux services (application mobile, crédit en ligne) construits autour, derrière une passerelle d’API.',
+        'Remplacement progressif du système central, domaine par domaine.',
+        'Plans de reprise et tests de résilience exigés par la réglementation.',
+      ],
+    },
+  ],
   prerequisites: [
     { id: 'event-sourcing', reason: 'Les banques ont besoin d’un historique inaltérable des opérations : l’Event Sourcing en fait le cœur du stockage.' },
     { id: 'hexagonale', reason: 'Isoler le métier des partenaires, réseaux de paiement et systèmes historiques est vital dans ce secteur.' },
