@@ -13,11 +13,9 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      // Avec noUncheckedIndexedAccess, `!` marque un accès dont l'existence est garantie
+      // (contenu validé au build) : on l'autorise plutôt que de multiplier les gardes inutiles.
+      '@typescript-eslint/no-non-null-assertion': 'off',
     },
-  },
-  {
-    // Dans les tests, `!` exprime « cet élément existe forcément » ; un échec du test le signalerait.
-    files: ['**/*.test.{ts,tsx}', 'tests/**/*.ts'],
-    rules: { '@typescript-eslint/no-non-null-assertion': 'off' },
   },
 );

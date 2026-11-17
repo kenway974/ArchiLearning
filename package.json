@@ -12,7 +12,7 @@
     "build": "npm run check:content && tsc -b && vite build",
     "preview": "vite preview",
     "lint": "eslint .",
-    "typecheck": "tsc -b --noEmit",
+    "typecheck": "tsc -b",
     "test": "vitest run",
     "test:watch": "vitest",
     "e2e": "playwright test --trace off",

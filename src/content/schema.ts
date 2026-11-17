@@ -9,7 +9,7 @@ export type TreeNode = {
   kind: 'dir' | 'file';
   /** Rôle du dossier ou du fichier, affiché au clic dans l'arborescence. */
   role: string;
-  children?: TreeNode[];
+  children?: TreeNode[] | undefined;
 };
 
 export const treeNodeSchema: z.ZodType<TreeNode> = z.lazy(() =>
