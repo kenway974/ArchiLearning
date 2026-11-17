@@ -49,6 +49,17 @@ export function HomePage() {
         </div>
       </section>
 
+      <section className="callout" aria-label="Au-delà des formations">
+        <p className="callout-title">Au-delà des formations</p>
+        <p>
+          Revues de code, mises en production, incidents, compromis : ce que les formations enseignent peu et qui
+          s’apprend en pratiquant.
+        </p>
+        <Link to="/terrain" className="btn">
+          Ce qui s’apprend en entreprise
+        </Link>
+      </section>
+
       <p className="home-progress">
         <Link to="/progression" className="btn">
           <Icon name="progress" /> Ma progression
