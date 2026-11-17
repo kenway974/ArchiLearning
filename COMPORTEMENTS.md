@@ -18,7 +18,7 @@ Hébergement : Vercel, URL propres (réécriture de toutes les routes vers `inde
 | `/carte/:id` | Mindmap centrée sur un nœud, sa fiche ouverte dans le panneau |
 | `/carte/liens/:id` | Mindmap centrée sur un lien, son explication ouverte dans le panneau |
 | `/progression` | Ma progression |
-| `/comparer/:a/:b` | Comparateur |
+| `/comparer`, `/comparer/:a`, `/comparer/:a/:b` | Comparateur (vide, un élément choisi, deux éléments choisis) |
 
 ---
 
@@ -92,7 +92,7 @@ Les fiches ont le même contenu en pleine page (`/cours/:id`) et dans le panneau
 | C30 | Une fiche concept affiche, dans cet ordre : idée en une phrase, problème résolu, quand l'utiliser, quand l'éviter, taille d'équipe et d'entreprise typique, arborescence d'exemple, extrait de code commenté, pièges, architectures voisines, quiz, idée de post LinkedIn. | E |
 | C31 | Une fiche secteur affiche : contexte et contraintes, architecture recommandée par taille (petite, moyenne, grande), langage et framework avec la justification, arborescence cliquable, extrait de code commenté, pièges courants, entreprises réelles (section absente s'il n'y en a pas), quiz, idée de post LinkedIn. | E |
 | C32 | En haut de chaque fiche : bouton « Voir sur la mindmap » (ouvre `/carte/:id`), bouton « Comparer avec… », bouton « Marquer comme lue / non lue ». | E |
-| C33 | Dans l'arborescence cliquable, cliquer (ou Entrée au clavier) sur un dossier ou un fichier affiche l'explication de son rôle ; un seul élément est expliqué à la fois. | E |
+| C33 | L'arborescence est dépliée par défaut. Cliquer (ou Entrée au clavier) sur un dossier ou un fichier affiche l'explication de son rôle ; un seul élément est expliqué à la fois. Au clavier : flèches haut/bas pour se déplacer, gauche/droite pour replier/déplier. | E |
 | C34 | Les extraits de code s'affichent avec coloration syntaxique, le nom du langage et un bouton « Copier ». | E |
 | C35 | Les architectures voisines sont cliquables : un clic ouvre l'explication de la relation. | E |
 | C36 | L'idée de post LinkedIn a un bouton « Copier ». | E |
@@ -107,10 +107,10 @@ Chaque fiche déclare ses **prérequis** (fiches à comprendre avant) et ses **s
 | C38 | Le parcours d'un sujet est calculé ainsi : ses prérequis non lus, eux-mêmes précédés de leurs propres prérequis non lus (dans l'ordre où il faut les lire), puis le sujet. Une fiche sans prérequis non lu a un parcours d'une seule étape. | U |
 | C39 | En haut d'une fiche qui a des prérequis non lus : « Pour bien comprendre ce sujet, commence par X, Y » et un bouton « Suivre le parcours ». On peut aussi lire la fiche directement. | E |
 | C40 | « Suivre le parcours » ouvre la première étape et mémorise le parcours en cours. | E |
-| C41 | Pendant un parcours, chaque fiche se termine par « Suivant : <titre> » et une phrase qui explique pourquoi c'est la suite logique, avec l'indication « Étape 2 / 4 ». | E |
+| C41 | Pendant un parcours, chaque fiche se termine par « Suivant : <titre> » et une phrase qui explique pourquoi c'est la suite logique, avec l'indication « Étape 2 / 4 ». La phrase est celle du prérequis qui relie l'étape suivante à l'étape courante ou, à défaut, à la fiche du parcours qui en a besoin. | U + E |
 | C42 | Cliquer sur « Suivant » marque la fiche courante comme lue et ouvre l'étape suivante. Sur la carte, la carte glisse jusqu'au nœud suivant et ouvre sa fiche dans le panneau ; en pleine page, la fiche suivante s'ouvre. | E |
 | C43 | Sur la carte, pendant un parcours, l'étape suivante est mise en évidence (anneau d'accent + mention « Suivant »). | E |
-| C44 | À la dernière étape, « Suivant » est remplacé par « Parcours terminé », avec les suites du sujet proposées (« Pour aller plus loin : … »). | E |
+| C44 | À la dernière étape, « Suivant » est remplacé par « Parcours terminé », avec les suites du sujet proposées (« Pour aller plus loin : … »). Le parcours en cours est clos quand la fiche cible est lue. | U + E |
 | C45 | Hors parcours, chaque fiche se termine par ses suites (« Pour aller plus loin »), chacune avec sa phrase d'explication. | E |
 
 ## I. Progression (stockage)
