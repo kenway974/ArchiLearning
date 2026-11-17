@@ -2,7 +2,7 @@ import { useId, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { ConceptSheet, SectorSheet, Sheet } from '../../content/schema';
 import { content } from '../../content/index';
-import { allSheets, getSheet } from '../../content/lookup';
+import { allSheets, getSheet, principlesOf } from '../../content/lookup';
 import { findLink } from '../compare/compare';
 import { buildPath, getStep, getStepReason } from '../path/buildPath';
 import { useProgress } from '../progress/ProgressContext';
@@ -172,6 +172,17 @@ function ConceptBody({ sheet, ctx }: { sheet: ConceptSheet; ctx: SheetContext })
     <>
       <Section title="Idée">
         <p className="lead">{sheet.summary}</p>
+      </Section>
+      <Section title="Principes appliqués">
+        <ul className="principle-list">
+          {principlesOf(sheet.id).map((p) => (
+            <li key={p.id}>
+              <span className="principle-dot" style={{ background: p.color }} aria-hidden="true" />
+              <Link to={ctx === 'map' ? `/carte/${p.id}` : `/principes/${p.id}`}>{p.title}</Link>
+              <span className="muted"> — {p.applications.find((a) => a.concept === sheet.id)?.how}</span>
+            </li>
+          ))}
+        </ul>
       </Section>
       <Section title="Problème résolu">
         <p>{sheet.problem}</p>

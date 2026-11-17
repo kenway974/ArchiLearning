@@ -7,6 +7,8 @@ import { NotFoundPage } from './NotFoundPage';
 import { CoursesPage } from '../features/courses/CoursesPage';
 import { SheetPage } from '../features/sheet/SheetPage';
 import { LinkPage } from '../features/sheet/LinkPage';
+import { PrinciplePage } from '../features/sheet/PrinciplePage';
+import { TerrainPage } from './TerrainPage';
 import { ProgressPage } from '../features/progress/ProgressPage';
 import { ComparePage } from '../features/compare/ComparePage';
 
@@ -29,6 +31,8 @@ export function App() {
             <Route path="cours" element={<CoursesPage />} />
             <Route path="cours/:id" element={<SheetPage />} />
             <Route path="liens/:id" element={<LinkPage />} />
+            <Route path="principes/:id" element={<PrinciplePage />} />
+            <Route path="terrain" element={<TerrainPage />} />
             <Route path="carte" element={mapElement} />
             <Route path="carte/liens/:linkId" element={mapElement} />
             <Route path="carte/:id" element={mapElement} />
