@@ -111,8 +111,14 @@ test.describe('Clavier et noms accessibles', () => {
 
   test('C61 — nœuds et liens ont un nom accessible explicite', async ({ page }, testInfo) => {
     await seedProgress(page, { read: [IDS.concept] });
-    // Sur mobile, seules les étiquettes des liens du nœud au centre sont affichées (C25)
-    await openMap(page, isMobile(testInfo) ? `/carte/${link(IDS.link).target}` : '/carte');
+    if (isMobile(testInfo)) {
+      // Sur mobile, seules les étiquettes des liens du nœud au centre sont affichées, panneau fermé (C25)
+      const target = link(IDS.link).target;
+      await openMap(page, `/carte/${target}`);
+      await sheetPanel(page, sheet(target).title).getByRole('button', { name: 'Fermer' }).tap();
+    } else {
+      await openMap(page);
+    }
     await expect(mapNode(page, IDS.concept)).toHaveAccessibleName(`${sheet(IDS.concept).title}, concept, lu`);
     await expect(mapNode(page, IDS.sector)).toHaveAccessibleName(`${sheet(IDS.sector).title}, secteur, non lu`);
     await expect(mapNode(page, 'concepts')).toHaveAccessibleName(/^Concepts, branche/);

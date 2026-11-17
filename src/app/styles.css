@@ -922,11 +922,12 @@ pre {
 }
 .map-toolbar {
   position: absolute;
-  top: 12px;
-  left: 12px;
+  bottom: 12px;
+  right: 12px;
   z-index: 5;
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 6px;
 }
 .map-handle {
@@ -1056,10 +1057,42 @@ pre {
   cursor: pointer;
   z-index: 2;
 }
-.map-link-label span {
+.map-link-title {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.map-link-dot {
+  display: none;
+}
+/* Ordinateur : pastille compacte, titre au survol ou au focus clavier */
+.map-link-label.compact {
+  justify-content: center;
+  min-width: 26px;
+  min-height: 26px;
+  padding: 0;
+}
+.map-link-label.compact .map-link-dot {
+  display: inline;
+}
+.map-link-label.compact .map-link-title {
+  display: none;
+}
+.map-link-label.compact:hover,
+.map-link-label.compact:focus-visible {
+  padding: 2px 10px;
+  z-index: 4;
+}
+.map-link-label.compact:hover .map-link-dot,
+.map-link-label.compact:focus-visible .map-link-dot {
+  display: none;
+}
+.map-link-label.compact:hover .map-link-title,
+.map-link-label.compact:focus-visible .map-link-title {
+  display: inline;
+}
+.map-link-label.concealed {
+  visibility: hidden;
 }
 .map-link-label.dimmed {
   border-color: var(--dim-border);
@@ -1235,10 +1268,6 @@ pre {
     position: static;
   }
   .map-toolbar {
-    top: auto;
-    bottom: 12px;
-    right: 12px;
-    left: auto;
     flex-direction: column;
   }
   .map-link-label {

@@ -25,7 +25,7 @@ import { BottomSheet, SidePanel, type Snap } from './Panels';
 
 const nodeTypes = { map: MapNode };
 const edgeTypes = { tree: TreeEdge, link: LinkEdge };
-const FIT_OPTIONS = { padding: 0.08 };
+const FIT_OPTIONS = { padding: 0.1 };
 const ANIMATION_MS = 450;
 
 const isSheetNode = (n: GraphNode) => n.type === 'concept' || n.type === 'sector';
@@ -78,7 +78,8 @@ function MapScreen() {
   // Étape suivante conseillée du parcours en cours
   const nextId = progress.activePath?.steps.find((s) => !read.has(s)) ?? null;
 
-  const highlightFrom = isMobile ? focusId : hovered;
+  // Ordinateur : le nœud survolé, sinon celui dont la fiche est ouverte. Mobile : le nœud au centre.
+  const highlightFrom = isMobile ? focusId : (hovered ?? sheet?.id ?? null);
   const highlight = useMemo(
     () => (highlightFrom && graphNodes.has(highlightFrom) ? focusSet(graph, highlightFrom) : null),
     [graph, graphNodes, highlightFrom],
@@ -172,13 +173,15 @@ function MapScreen() {
             dimmed,
             highlighted: highlight ? touches(e) : false,
             labelHidden: isMobile && !touches(e),
+            labelConcealed: isMobile && panelOpen,
+            compact: !isMobile,
             title: e.label ?? '',
             labelAt,
             onActivate: activateLink,
           },
         } satisfies LinkFlowEdge;
       });
-  }, [graph, positions, isVisible, highlight, highlightFrom, graphNodes, activateLink, isMobile]);
+  }, [graph, positions, isVisible, highlight, highlightFrom, graphNodes, activateLink, isMobile, panelOpen]);
 
   // --- Vue : ordinateur ----------------------------------------------------------------------
   // La carte entière tient dans la zone visible, y compris quand le panneau réduit la largeur.

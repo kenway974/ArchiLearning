@@ -77,7 +77,7 @@ La même mindmap que sur ordinateur, pas de liste de repli.
 | N° | Comportement | Test |
 |---|---|---|
 | C24 | La carte se zoome à deux doigts et se déplace au doigt. | E (mobile) |
-| C25 | Toucher un nœud le place au centre avec une animation. Son parent, ses enfants et ses nœuds reliés restent nets ; le reste est estompé (mode focus). Seules les étiquettes des liens du nœud au centre sont affichées, pour ne pas masquer les nœuds. | U + E (mobile) |
+| C25 | Toucher un nœud le place au centre avec une animation. Son parent, ses enfants et ses nœuds reliés restent nets ; le reste est estompé (mode focus). Seules les étiquettes des liens du nœud au centre sont affichées, et seulement quand le panneau de fiche est fermé, pour ne pas masquer les nœuds. | U + E (mobile) |
 | C26 | Un fil d'Ariane en haut (ex. Architectures logicielles › Concepts › CQRS) permet de remonter d'un toucher à n'importe quel niveau. | E (mobile) |
 | C27 | Toucher un nœud de fiche ouvre aussi un panneau qui monte du bas, à mi-hauteur : titre, idée en une phrase, points clés, bouton « Voir toute la fiche ». Glisser vers le haut (ou ce bouton) le passe en plein écran avec la fiche complète. Glisser vers le bas le referme. | E (mobile) |
 | C28 | Toucher l'étiquette d'un lien ouvre son explication dans le même panneau du bas. | E (mobile) |

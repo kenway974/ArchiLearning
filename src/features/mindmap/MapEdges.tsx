@@ -10,6 +10,10 @@ export type LinkEdgeData = TreeEdgeData & {
   highlighted: boolean;
   /** Mode focus mobile : seules les étiquettes des liens du nœud au centre sont affichées. */
   labelHidden: boolean;
+  /** Mobile, panneau ouvert : étiquette présente mais invisible (la fiche liste déjà ses relations). */
+  labelConcealed: boolean;
+  /** Ordinateur : pastille compacte, le titre apparaît au survol ou au focus. */
+  compact: boolean;
   onActivate: (id: string) => void;
 };
 
@@ -46,7 +50,11 @@ export function LinkEdge({ id, data }: EdgeProps<LinkFlowEdge>) {
   const control = { x: (from.x + to.x) / 2 - dy * 0.15, y: (from.y + to.y) / 2 + dx * 0.15 };
   const label = quad(from, control, to, data.labelAt);
   const scale = Math.max(1, 1 / zoom);
-  const state = data.highlighted ? 'highlighted' : data.dimmed ? 'dimmed' : '';
+  const state = [
+    data.highlighted ? 'highlighted' : data.dimmed ? 'dimmed' : '',
+    data.compact ? 'compact' : '',
+    data.labelConcealed ? 'concealed' : '',
+  ].join(' ');
 
   return (
     <>
@@ -68,7 +76,10 @@ export function LinkEdge({ id, data }: EdgeProps<LinkFlowEdge>) {
           style={{ transform: `translate(-50%, -50%) translate(${label.x}px, ${label.y}px) scale(${scale})` }}
           onClick={() => data.onActivate(id)}
         >
-          <span>{data.title}</span>
+          <span className="map-link-dot" aria-hidden="true">
+            ↔
+          </span>
+          <span className="map-link-title">{data.title}</span>
         </button>
       </EdgeLabelRenderer>
       )}
