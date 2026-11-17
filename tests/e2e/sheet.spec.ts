@@ -85,16 +85,18 @@ test.describe('Fiches', () => {
   test('C33 — cliquer sur un dossier ou un fichier de l’arborescence explique son rôle, un à la fois', async ({ page }, testInfo) => {
     const s = sheet(IDS.sector);
     await page.goto(`/cours/${s.id}`);
-    const tree = page.getByRole('tree');
+    // Plusieurs fichiers peuvent porter le même nom (ex. un pom.xml par module) : on cible par position.
+    const items = page.getByRole('tree').getByRole('treeitem');
+    const nodes = flatten(s.tree);
     const [first, second] = s.tree;
     if (!first || !second) throw new Error('arborescence trop courte pour le test');
 
-    await press(tree.getByRole('treeitem', { name: first.name, exact: true }), testInfo);
+    await press(items.nth(nodes.indexOf(first)), testInfo);
     const explanation = page.getByRole('region', { name: /^Rôle de / });
     await expect(explanation).toHaveCount(1);
     await expect(explanation).toContainText(first.role);
 
-    await press(tree.getByRole('treeitem', { name: second.name, exact: true }), testInfo);
+    await press(items.nth(nodes.indexOf(second)), testInfo);
     await expect(explanation).toHaveCount(1);
     await expect(explanation).toContainText(second.role);
     await expect(explanation).not.toContainText(first.role);
@@ -104,22 +106,25 @@ test.describe('Fiches', () => {
     test.skip(testInfo.project.name === 'mobile', 'clavier : ordinateur uniquement');
     const s = sheet(IDS.sector);
     await page.goto(`/cours/${s.id}`);
+    const items = page.getByRole('tree').getByRole('treeitem');
+    const nodes = flatten(s.tree);
     const dir = s.tree.find((n) => n.kind === 'dir' && (n.children?.length ?? 0) > 0)!;
-    const child = page.getByRole('treeitem', { name: dir.children![0]!.name, exact: true }).first();
-    const item = page.getByRole('tree').getByRole('treeitem', { name: dir.name, exact: true }).first();
+    const item = items.nth(nodes.indexOf(dir));
+    const child = items.nth(nodes.indexOf(dir.children![0]!));
     await expect(item).toHaveAttribute('aria-expanded', 'true');
-    await expect(child).toBeVisible();
+    await expect(child).toHaveAttribute('aria-level', '2');
 
     await item.focus();
     await page.keyboard.press('Enter');
     await expect(page.getByRole('region', { name: `Rôle de ${dir.name}` })).toContainText(dir.role);
     await page.keyboard.press('ArrowLeft');
     await expect(item).toHaveAttribute('aria-expanded', 'false');
-    await expect(child).toBeHidden();
+    await expect(items).toHaveCount(nodes.length - flatten(dir.children!).length);
     await page.keyboard.press('ArrowRight');
     await expect(item).toHaveAttribute('aria-expanded', 'true');
+    await expect(items).toHaveCount(nodes.length);
     await page.keyboard.press('ArrowDown');
-    await expect(child).toBeFocused();
+    await expect(items.nth(nodes.indexOf(dir) + 1)).toBeFocused();
   });
 
   test('C33 — chaque élément de l’arborescence affiche son explication', async ({ page }, testInfo) => {
