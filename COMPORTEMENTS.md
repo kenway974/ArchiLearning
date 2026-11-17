@@ -17,6 +17,8 @@ Hébergement : Vercel, URL propres (réécriture de toutes les routes vers `inde
 | `/carte` | Mindmap |
 | `/carte/:id` | Mindmap centrée sur un nœud, sa fiche ouverte dans le panneau |
 | `/carte/liens/:id` | Mindmap centrée sur un lien, son explication ouverte dans le panneau |
+| `/principes/:id` | Fiche d'un principe partagé en pleine page |
+| `/terrain` | Ce qui s'apprend en entreprise plutôt qu'en formation |
 | `/progression` | Ma progression |
 | `/comparer`, `/comparer/:a`, `/comparer/:a/:b` | Comparateur (vide, un élément choisi, deux éléments choisis) |
 
@@ -54,7 +56,7 @@ Hébergement : Vercel, URL propres (réécriture de toutes les routes vers `inde
 
 | N° | Comportement | Test |
 |---|---|---|
-| C14 | Le graphe est dérivé des fiches : une racine « Architectures logicielles », deux branches « Concepts » et « Secteurs », un nœud par fiche rattaché à sa branche. | U |
+| C14 | Le graphe est dérivé des fiches : une racine « Architectures logicielles », deux branches « Concepts » et « Secteurs », un nœud par fiche ; chaque concept est rattaché à sa famille, chaque famille à la branche Concepts (C72). | U |
 | C15 | Chaque lien transverse de `links.ts` devient une arête entre deux nœuds existants, avec une étiquette (son titre). | U |
 | C16 | Les positions des nœuds sont calculées de façon déterministe (même contenu → même disposition), sans chevauchement de nœuds. | U |
 | C17 | Pour un nœud donné, on sait calculer son parent, ses enfants et ses nœuds reliés par un lien transverse (utilisé pour le survol et le mode focus). | U |
@@ -78,7 +80,7 @@ La même mindmap que sur ordinateur, pas de liste de repli.
 |---|---|---|
 | C24 | La carte se zoome à deux doigts et se déplace au doigt. | E (mobile) |
 | C25 | Toucher un nœud le place au centre avec une animation. Son parent, ses enfants et ses nœuds reliés restent nets ; le reste est estompé (mode focus). Seules les étiquettes des liens du nœud au centre sont affichées, et seulement quand le panneau de fiche est fermé, pour ne pas masquer les nœuds. | U + E (mobile) |
-| C26 | Un fil d'Ariane en haut (ex. Architectures logicielles › Concepts › CQRS) permet de remonter d'un toucher à n'importe quel niveau. | E (mobile) |
+| C26 | Un fil d'Ariane en haut (ex. Architectures logicielles › Concepts › Lecture et historique › CQRS) permet de remonter d'un toucher à n'importe quel niveau. | E (mobile) |
 | C27 | Toucher un nœud de fiche ouvre aussi un panneau qui monte du bas, à mi-hauteur : titre, idée en une phrase, points clés, bouton « Voir toute la fiche ». Glisser vers le haut (ou ce bouton) le passe en plein écran avec la fiche complète. Glisser vers le bas le referme. | E (mobile) |
 | C28 | Toucher l'étiquette d'un lien ouvre son explication dans le même panneau du bas. | E (mobile) |
 | C29 | Toutes les zones tactiles (nœuds, étiquettes de lien, boutons, fil d'Ariane, barre de navigation, réponses du quiz) mesurent au moins 44×44 px. | E (mobile) |
@@ -89,7 +91,7 @@ Les fiches ont le même contenu en pleine page (`/cours/:id`) et dans le panneau
 
 | N° | Comportement | Test |
 |---|---|---|
-| C30 | Une fiche concept affiche, dans cet ordre : idée en une phrase, problème résolu, quand l'utiliser, quand l'éviter, taille d'équipe et d'entreprise typique, arborescence d'exemple, extrait de code commenté, pièges, architectures voisines, quiz, idée de post LinkedIn. | E |
+| C30 | Une fiche concept affiche, dans cet ordre : idée en une phrase, principes appliqués (C76), problème résolu, quand l'utiliser, quand l'éviter, taille d'équipe et d'entreprise typique, arborescence d'exemple, extrait de code commenté, pièges, architectures voisines, quiz, idée de post LinkedIn. | E |
 | C31 | Une fiche secteur affiche : contexte et contraintes, architecture recommandée par taille (petite, moyenne, grande), exemples d'entreprises (trois entreprises fictives, une par taille, présentées comme telles, avec leur équipe et leurs pratiques courantes), langage et framework avec la justification, arborescence cliquable, extrait de code commenté, pièges courants, quiz, idée de post LinkedIn. | U + E |
 | C32 | En haut de chaque fiche : bouton « Voir sur la mindmap » (ouvre `/carte/:id`), bouton « Comparer avec… », bouton « Marquer comme lue / non lue ». | E |
 | C33 | L'arborescence est dépliée par défaut. Cliquer (ou Entrée au clavier) sur un dossier ou un fichier affiche l'explication de son rôle ; un seul élément est expliqué à la fois. Au clavier : flèches haut/bas pour se déplacer, gauche/droite pour replier/déplier. | E |
@@ -161,6 +163,23 @@ Chaque fiche déclare ses **prérequis** (fiches à comprendre avant) et ses **s
 | C67 | Les identifiants des fiches sont uniques et utilisables dans une URL (minuscules, chiffres, tirets). | U |
 | C68 | Les 16 fiches concepts et les 4 fiches secteurs de la V1 existent. | U |
 | C69 | Le build échoue si une règle de C62 à C68 est violée, avec un message qui nomme le fichier et le champ fautifs. | U |
+
+## O. Familles et principes partagés
+
+| N° | Comportement | Test |
+|---|---|---|
+| C72 | Les concepts sont regroupés en familles (Organiser le code, Protéger le métier, Lecture et historique, Découper et déployer, Circuler et étendre), qui forment un niveau de la carte entre la branche Concepts et les concepts. | U + E |
+| C73 | Les principes partagés (ex. inversion des dépendances) sont des nœuds de la carte, reliés par une ligne de leur couleur à chaque concept qui les applique ; chaque concept porte une pastille par principe, de la même couleur. Deux concepts qui partagent un principe sont donc visiblement reliés. | U + E |
+| C74 | Disposition : racine au centre, secteurs à droite ; à gauche, la branche Concepts, puis les familles, puis les concepts, puis la colonne des principes, chaque principe placé à la hauteur moyenne des concepts qui le partagent, sans chevauchement. | U |
+| C75 | Cliquer (ou toucher) un principe ouvre sa fiche dans le panneau : ce qu'il dit, pourquoi il compte, et pour chaque concept qui l'applique, comment. La même fiche existe en pleine page (`/principes/:id`). Survoler un principe met en évidence ses concepts. | E |
+| C76 | Une fiche concept liste ses principes appliqués ; chacun mène à la fiche du principe. | E |
+| C77 | Validation : chaque concept appartient à exactement une famille ; chaque principe est partagé par au moins deux concepts existants, avec pour chacun une phrase « comment » ; identifiants uniques entre fiches, familles et principes. | U |
+
+## P. Ce qui s'apprend en entreprise
+
+| N° | Comportement | Test |
+|---|---|---|
+| C78 | Une page « Ce qui s'apprend en entreprise » (`/terrain`), accessible depuis l'accueil, résume ce que les formations de développeurs enseignent peu et qui s'apprend en pratiquant : chaque thème explique pourquoi la formation le couvre mal et comment l'apprendre plus vite. | E |
 
 ## N. Outillage
 
