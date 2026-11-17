@@ -135,7 +135,7 @@ Chaque fiche déclare ses **prérequis** (fiches à comprendre avant) et ses **s
 | N° | Comportement | Test |
 |---|---|---|
 | C53 | Le comparateur est accessible depuis la barre de navigation et depuis chaque fiche (« Comparer avec… », la fiche courante pré-remplie à gauche). | E |
-| C54 | On choisit deux concepts **ou** deux secteurs (pas un mélange) ; ils s'affichent côte à côte, critère par critère sur la même ligne. Concepts : idée, problème, quand utiliser, quand éviter, taille d'équipe, pièges. Secteurs : contraintes, architecture par taille, langage et framework, pièges. | U (critères) + E |
+| C54 | On choisit deux concepts **ou** deux secteurs (pas un mélange) ; sur ordinateur, ils s’affichent côte à côte, critère par critère sur la même ligne. Concepts : idée, problème, quand utiliser, quand éviter, taille d'équipe, pièges. Secteurs : contraintes, architecture par taille, langage et framework, pièges. | U (critères) + E |
 | C55 | Si un lien existe entre les deux éléments comparés, son explication est affichée en haut. | E |
 | C56 | Le choix est dans l'URL (`/comparer/cqrs/event-sourcing`), donc partageable. | E |
 | C57 | Sur mobile, un sélecteur bascule entre les deux colonnes, critère par critère, sans défilement horizontal de la page. | E (mobile) |

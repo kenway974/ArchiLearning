@@ -6,7 +6,7 @@ const section = (page: Page, name: 'Concepts' | 'Secteurs') => page.getByRole('r
 const cards = (page: Page) => page.getByRole('main').getByRole('article');
 const search = (page: Page) => page.getByRole('searchbox', { name: 'Rechercher un cours' });
 const filter = (page: Page, name: 'Tous' | 'Non lus' | 'Lus') =>
-  page.getByRole('radiogroup', { name: 'Filtrer' }).getByRole('radio', { name });
+  page.getByRole('radiogroup', { name: 'Filtrer' }).getByRole('radio', { name, exact: true });
 
 test.describe('Liste des cours', () => {
   test('C07 — deux sections, une carte par cours avec titre, idée et coche si lu', async ({ page }) => {

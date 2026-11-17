@@ -34,7 +34,8 @@ test.describe('Comparateur', () => {
     await expect(left(page)).toHaveValue(IDS.concept);
   });
 
-  test('C54 — deux concepts côte à côte, critère par critère', async ({ page }) => {
+  test('C54 — deux concepts côte à côte, critère par critère', async ({ page }, testInfo) => {
+    test.skip(isMobile(testInfo), 'sur mobile : une colonne à la fois (C57)');
     const [a, b] = unlinkedPair;
     await page.goto(`/comparer/${a}/${b}`);
     const t = table(page);
@@ -51,7 +52,8 @@ test.describe('Comparateur', () => {
     await expect(t.getByRole('row', { name: /^Idée/ })).toContainText(sheet(b).summary);
   });
 
-  test('C54 — deux secteurs côte à côte', async ({ page }) => {
+  test('C54 — deux secteurs côte à côte', async ({ page }, testInfo) => {
+    test.skip(isMobile(testInfo), 'sur mobile : une colonne à la fois (C57)');
     const [a, b] = [content.sectors[0]!.id, content.sectors[1]!.id];
     await page.goto(`/comparer/${a}/${b}`);
     await expect(table(page).getByRole('rowheader')).toHaveText([

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { content } from '../../src/content/index';
-import { IDS, isMobile, link, mainNav, openMap, press, sheet, sheetPanel } from './helpers';
+import { IDS, isMobile, link, mainNav, openMap, press, sheet, sheetPanel, waitForViewportStable } from './helpers';
 
 test.describe('Accueil et navigation générale', () => {
   test('C01 — l’accueil présente l’app et mène aux cours, à la mindmap et à la progression', async ({ page }, testInfo) => {
@@ -105,6 +105,11 @@ test.describe('Accueil et navigation générale', () => {
     await page.goto('/');
     await press(page.getByRole('main').getByRole('link', { name: 'Voir la mindmap' }), testInfo);
     await openMap(page, '/carte');
+    if (isMobile(testInfo)) {
+      // Sur mobile, la carte s'ouvre centrée sur la racine : on passe par la branche
+      await page.locator('[data-node-id="concepts"]').tap();
+      await waitForViewportStable(page);
+    }
     await press(page.locator(`[data-node-id="${concept.id}"]`), testInfo);
     await expect(page).toHaveURL(`/carte/${concept.id}`);
     await expect(sheetPanel(page, concept.title)).toBeVisible();
