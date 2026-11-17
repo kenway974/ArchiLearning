@@ -35,7 +35,7 @@ test.describe('Progression', () => {
     await seedProgress(page, { read: [IDS.concept] });
     await openMap(page);
     await expect(mapNode(page, IDS.concept)).toHaveAttribute('data-read', 'true');
-    await expect(mapNode(page, IDS.concept)).toHaveAccessibleName(new RegExp(`${sheet(IDS.concept).title}, concept, lu$`));
+    await expect(mapNode(page, IDS.concept)).toHaveAccessibleName(new RegExp(`^${sheet(IDS.concept).title}, concept, lu(,|$)`));
     await expect(mapNode(page, IDS.sector)).toHaveAttribute('data-read', 'false');
     await expect(mapNode(page, IDS.concept).getByTestId('read-check')).toBeVisible();
     await expect(mapNode(page, IDS.sector).getByTestId('read-check')).toHaveCount(0);

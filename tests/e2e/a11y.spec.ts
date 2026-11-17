@@ -119,7 +119,8 @@ test.describe('Clavier et noms accessibles', () => {
     } else {
       await openMap(page);
     }
-    await expect(mapNode(page, IDS.concept)).toHaveAccessibleName(`${sheet(IDS.concept).title}, concept, lu`);
+    // Le nom commence par le titre, le type et l'état de lecture ; viennent ensuite les principes appliqués (C73)
+    await expect(mapNode(page, IDS.concept)).toHaveAccessibleName(new RegExp(`^${sheet(IDS.concept).title}, concept, lu, principes : `));
     await expect(mapNode(page, IDS.sector)).toHaveAccessibleName(`${sheet(IDS.sector).title}, secteur, non lu`);
     await expect(mapNode(page, 'concepts')).toHaveAccessibleName(/^Concepts, branche/);
     await expect(linkLabel(page, IDS.link)).toHaveAccessibleName(`Lien : ${link(IDS.link).title}`);

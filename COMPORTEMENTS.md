@@ -69,7 +69,7 @@ Hébergement : Vercel, URL propres (réécriture de toutes les routes vers `inde
 | C19 | Les branches « Concepts » et « Secteurs » se replient et se déplient d'un clic sur leur bouton ; les nœuds et liens concernés disparaissent ou réapparaissent. | E (ordi) |
 | C20 | Survoler un nœud met en évidence ses liens et les nœuds reliés ; le reste est estompé. | E (ordi) |
 | C21 | Cliquer sur un nœud ouvre sa fiche dans un panneau latéral ; la carte reste visible et interactive à côté. | E (ordi) |
-| C22 | Cliquer sur l'étiquette au milieu d'un lien ouvre l'explication de la relation dans le même panneau. | E (ordi) |
+| C22 | Les étiquettes des liens d'un nœud apparaissent quand on le survole ou que sa fiche est ouverte, et restent le temps d'aller les cliquer ; cliquer sur une étiquette ouvre l'explication de la relation dans le même panneau. | E (ordi) |
 | C23 | Le panneau se ferme par un bouton « Fermer » et par la touche Échap. | E (ordi) |
 
 ## F. Mindmap — mobile
@@ -149,7 +149,7 @@ Chaque fiche déclare ses **prérequis** (fiches à comprendre avant) et ses **s
 | C58 | Le thème suit le réglage de l'appareil ; le bouton de thème force clair ou sombre, et ce choix est mémorisé. | E |
 | C59 | Les contrastes respectent WCAG AA dans les deux thèmes (vérification axe-core sur l'accueil, la liste, la carte, une fiche concept, une fiche secteur, la progression, le comparateur). | E |
 | C60 | Au clavier sur ordinateur : Tab parcourt la navigation, les nœuds et les étiquettes de lien ; Entrée ouvre la fiche ; Échap ferme le panneau ; le focus est toujours visible et revient sur le nœud à la fermeture. | E (ordi) |
-| C61 | Les nœuds et liens ont un nom accessible (ex. « CQRS, concept, lu »). | E |
+| C61 | Les nœuds et liens ont un nom accessible (ex. « CQRS, concept, lu, principes : … »). | E |
 
 ## M. Validation du contenu
 

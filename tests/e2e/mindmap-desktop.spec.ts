@@ -127,6 +127,10 @@ test.describe('Mindmap — ordinateur', () => {
     await openMap(page);
     const l = link(IDS.link);
     await expect(linkLabel(page, l.id)).toHaveAccessibleName(`Lien : ${l.title}`);
+    // L'étiquette apparaît au survol d'un nœud du lien et reste le temps d'aller la cliquer
+    await expect(linkLabel(page, l.id)).toHaveCSS('opacity', '0');
+    await mapNode(page, l.source).hover();
+    await expect(linkLabel(page, l.id)).toHaveCSS('opacity', '1');
     await linkLabel(page, l.id).click();
     const panel = sheetPanel(page, l.title);
     await expect(panel).toBeVisible();

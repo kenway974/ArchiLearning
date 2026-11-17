@@ -34,6 +34,23 @@ async function recordTransforms(page: Page) {
   return () => page.evaluate(() => new Set((window as unknown as { __transforms: string[] }).__transforms).size);
 }
 
+/** Attend la fin de l'animation du panneau du bas avant de viser sa poignée. */
+async function settled(locator: Locator) {
+  let previous = -1;
+  await expect
+    .poll(
+      async () => {
+        const y = (await locator.boundingBox())?.y ?? -1;
+        const stable = y === previous;
+        previous = y;
+        return stable;
+      },
+      { intervals: [100], timeout: 5000 },
+    )
+    .toBe(true);
+  return centerOf(locator);
+}
+
 async function expectCentered(node: Locator) {
   const c = await centerOf(node);
   expect(Math.abs(c.x - VIEW.width / 2)).toBeLessThan(30);
@@ -140,17 +157,17 @@ test.describe('Mindmap — mobile', () => {
 
     // Glisser la poignée vers le haut → plein écran avec la fiche complète
     const handle = panel.getByTestId('sheet-handle');
-    const h = await centerOf(handle);
+    const h = await settled(handle);
     await swipe(page, h, { x: h.x, y: 60 });
     await expect(panel).toHaveAttribute('data-snap', 'full');
     await expect(panel.getByRole('heading', { name: 'Quiz' })).toBeAttached();
     expect((await panel.boundingBox())!.y).toBeLessThan(VIEW.height * 0.1);
 
     // Glisser vers le bas → retour à mi-hauteur, puis fermeture
-    const h2 = await centerOf(handle);
+    const h2 = await settled(handle);
     await swipe(page, h2, { x: h2.x, y: VIEW.height / 2 });
     await expect(panel).toHaveAttribute('data-snap', 'half');
-    const h3 = await centerOf(handle);
+    const h3 = await settled(handle);
     await swipe(page, h3, { x: h3.x, y: VIEW.height - 5 });
     await expect(panel).toHaveCount(0);
   });
