@@ -111,8 +111,34 @@ export const linkSchema = z.object({
 });
 export type Link = z.infer<typeof linkSchema>;
 
+/** Famille de concepts : un niveau de la carte entre la branche Concepts et les concepts. */
+export const familySchema = z.object({
+  id: text,
+  title: text,
+  concepts: z.array(text),
+});
+export type Family = z.infer<typeof familySchema>;
+
+/** Principe partagé par plusieurs concepts (ex. inversion des dépendances). */
+export const principleSchema = z.object({
+  id: text,
+  title: text,
+  /** Le principe en une phrase. */
+  summary: text,
+  /** Pourquoi il compte. */
+  why: text,
+  /** Couleur de ses lignes et pastilles sur la carte. */
+  color: z.string().regex(/^#[0-9a-f]{6}$/i, 'couleur hexadécimale attendue (#rrggbb)'),
+  applications: z
+    .array(z.object({ concept: text, how: text }))
+    .min(2, 'un principe partagé est appliqué par au moins deux concepts'),
+});
+export type Principle = z.infer<typeof principleSchema>;
+
 export type Content = {
   concepts: ConceptSheet[];
   sectors: SectorSheet[];
   links: Link[];
+  families: Family[];
+  principles: Principle[];
 };

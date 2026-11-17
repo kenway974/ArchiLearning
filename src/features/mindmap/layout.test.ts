@@ -37,12 +37,42 @@ describe('disposition de la carte', () => {
     }
   });
 
-  test('C16 — les concepts et les secteurs occupent deux côtés distincts de la racine', () => {
+  test('C74 — secteurs à droite ; à gauche, de la racine vers l’extérieur : Concepts, familles, concepts, principes', () => {
     const graph = buildGraph(content);
     const positions = layoutGraph(graph);
-    const side = (type: string) =>
-      graph.nodes.filter((n) => n.type === type).map((n) => Math.sign(positions[n.id]!.x));
-    expect(new Set(side('concept'))).toEqual(new Set([-1]));
-    expect(new Set(side('sector'))).toEqual(new Set([1]));
+    const xs = (type: string) => graph.nodes.filter((n) => n.type === type).map((n) => positions[n.id]!.x);
+    const max = (v: number[]) => Math.max(...v);
+    const min = (v: number[]) => Math.min(...v);
+    expect(min(xs('sector'))).toBeGreaterThan(0);
+    expect(positions.concepts!.x).toBeLessThan(0);
+    expect(max(xs('family'))).toBeLessThan(positions.concepts!.x);
+    expect(max(xs('concept'))).toBeLessThan(min(xs('family')));
+    expect(max(xs('principle'))).toBeLessThan(min(xs('concept')));
+  });
+
+  test('C74 — les concepts d’une même famille sont regroupés, la famille est centrée sur eux', () => {
+    const graph = buildGraph(content);
+    const positions = layoutGraph(graph);
+    for (const family of content.families) {
+      const ys = family.concepts.map((c) => positions[c]!.y);
+      const mean = ys.reduce((a, b) => a + b, 0) / ys.length;
+      expect(positions[family.id]!.y).toBeCloseTo(mean, 5);
+      // aucun concept d'une autre famille entre le premier et le dernier de celle-ci
+      const others = content.concepts.filter((c) => !family.concepts.includes(c.id));
+      for (const o of others) {
+        const y = positions[o.id]!.y;
+        expect(y < Math.min(...ys) || y > Math.max(...ys), `${o.id} au milieu de ${family.id}`).toBe(true);
+      }
+    }
+  });
+
+  test('C74 — chaque principe est à la hauteur moyenne de ses concepts, à un écart près pour éviter les chevauchements', () => {
+    const graph = buildGraph(makeContent());
+    const positions = layoutGraph(graph);
+    for (const p of makeContent().principles) {
+      const ys = p.applications.map((a) => positions[a.concept]!.y);
+      const mean = ys.reduce((a, b) => a + b, 0) / ys.length;
+      expect(Math.abs(positions[p.id]!.y - mean)).toBeLessThan(NODE_SIZE.height * 1.5);
+    }
   });
 });

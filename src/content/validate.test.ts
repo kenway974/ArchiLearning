@@ -1,6 +1,6 @@
 import { checkContent, validateContent, type ContentError } from './validate';
 import type { Content } from './schema';
-import { makeConcept, makeContent, makeLink, makeSector, makeTree } from '../../tests/fixtures/content';
+import { makeConcept, makeContent, makeFamily, makeLink, makePrinciple, makeSector, makeTree } from '../../tests/fixtures/content';
 
 const messages = (errors: ContentError[]) => errors.map((e) => `${e.file} ${e.path} ${e.message}`);
 
@@ -164,7 +164,13 @@ describe('C67 — identifiants', () => {
   );
 
   test.each(['cqrs', 'event-sourcing', 'saas-b2b', 'web3'])('C67 — l’identifiant « %s » est accepté', (id) => {
-    const content: Content = { concepts: [makeConcept({ id })], sectors: [], links: [] };
+    const content: Content = {
+      concepts: [makeConcept({ id })],
+      sectors: [],
+      links: [],
+      families: [makeFamily('famille', [id])],
+      principles: [],
+    };
     expect(validateContent(content)).toEqual([]);
   });
 
@@ -182,4 +188,58 @@ describe('C67 — identifiants', () => {
       expect(validateContent(content)).not.toEqual([]);
     },
   );
+});
+
+describe('C77 — familles et principes', () => {
+  test('C77 — un concept sans famille est refusé', () => {
+    const content = makeContent();
+    content.families[0] = { ...content.families[0]!, concepts: [] };
+    expect(messages(validateContent(content)).join('\n')).toMatch(/families\.ts .*couches/);
+  });
+
+  test('C77 — un concept dans deux familles est refusé', () => {
+    const content = makeContent();
+    content.families[1] = { ...content.families[1]!, concepts: ['ddd', 'couches'] };
+    expect(validateContent(content)).not.toEqual([]);
+  });
+
+  test('C77 — une famille qui cite un concept inexistant est refusée', () => {
+    const content = makeContent();
+    content.families[1] = { ...content.families[1]!, concepts: ['ddd', 'fantome'] };
+    expect(messages(validateContent(content)).join('\n')).toMatch(/fantome/);
+  });
+
+  test('C77 — un principe appliqué par un seul concept n’est pas « partagé » : refusé', () => {
+    const content = makeContent();
+    content.principles[0] = makePrinciple('separation', ['couches']);
+    expect(messages(validateContent(content)).join('\n')).toMatch(/principles\.ts .*separation/);
+  });
+
+  test('C77 — un principe qui cite un concept inexistant est refusé', () => {
+    const content = makeContent();
+    content.principles[0] = makePrinciple('separation', ['couches', 'fantome']);
+    expect(validateContent(content)).not.toEqual([]);
+  });
+
+  test('C77 — une application sans phrase « comment » est refusée', () => {
+    const content = makeContent();
+    const p = content.principles[0]!;
+    content.principles[0] = { ...p, applications: [{ concept: 'couches', how: '' }, p.applications[1]!] };
+    expect(validateContent(content)).not.toEqual([]);
+  });
+
+  test('C77 — une couleur de principe invalide est refusée', () => {
+    const content = makeContent();
+    content.principles[0] = { ...content.principles[0]!, color: 'bleu' };
+    expect(validateContent(content)).not.toEqual([]);
+  });
+
+  test('C77 — un identifiant de principe ou de famille identique à une fiche est refusé', () => {
+    const content = makeContent();
+    content.principles[0] = makePrinciple('cqrs', ['couches', 'ddd']);
+    expect(validateContent(content)).not.toEqual([]);
+    const other = makeContent();
+    other.families[0] = makeFamily('banque', ['couches']);
+    expect(validateContent(other)).not.toEqual([]);
+  });
 });

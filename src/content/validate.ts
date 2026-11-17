@@ -1,7 +1,9 @@
 import type { z } from 'zod';
 import {
   conceptSheetSchema,
+  familySchema,
   linkSchema,
+  principleSchema,
   sectorSheetSchema,
   type Content,
   type Language,
@@ -19,8 +21,10 @@ export type ContentError = {
 
 export const ID_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 /** Identifiants des nœuds de structure de la carte. */
-export const RESERVED_IDS = ['root', 'concepts', 'sectors'];
+export const RESERVED_IDS = ['root', 'concepts', 'sectors', 'principles'];
 const LINKS_FILE = 'src/content/links.ts';
+const FAMILIES_FILE = 'src/content/families.ts';
+const PRINCIPLES_FILE = 'src/content/principles.ts';
 
 /** Fichiers de projet propres à chaque écosystème : l'arborescence d'un secteur doit en contenir un. */
 const MANIFESTS: Record<Language, { label: string; match: (name: string) => boolean }> = {
@@ -122,6 +126,56 @@ export function validateContent(content: Content): ContentError[] {
       });
     }
   }
+  // Familles : chaque concept dans exactement une famille
+  content.families.forEach((f, i) =>
+    errors.push(...schemaErrors(FAMILIES_FILE, familySchema.safeParse(f)).map((e) => ({ ...e, path: `${i}.${e.path}` }))),
+  );
+  const familyCount = new Map<string, number>();
+  content.families.forEach((f, i) =>
+    f.concepts.forEach((c, j) => {
+      if (!conceptIds.has(c)) errors.push({ file: FAMILIES_FILE, path: `${i}.concepts.${j}`, message: `concept inexistant : ${c}` });
+      familyCount.set(c, (familyCount.get(c) ?? 0) + 1);
+    }),
+  );
+  for (const c of content.concepts) {
+    const n = familyCount.get(c.id) ?? 0;
+    if (n !== 1) {
+      errors.push({
+        file: FAMILIES_FILE,
+        path: 'concepts',
+        message: n === 0 ? `le concept ${c.id} n’a pas de famille` : `le concept ${c.id} est dans ${n} familles`,
+      });
+    }
+  }
+
+  // Principes : partagés par au moins deux concepts existants
+  content.principles.forEach((p, i) => {
+    errors.push(
+      ...schemaErrors(PRINCIPLES_FILE, principleSchema.safeParse(p)).map((e) => ({
+        ...e,
+        path: `${i}.${e.path}`,
+        message: `${p.id} : ${e.message}`,
+      })),
+    );
+    p.applications.forEach((a, j) => {
+      if (!conceptIds.has(a.concept)) {
+        errors.push({ file: PRINCIPLES_FILE, path: `${i}.applications.${j}`, message: `${p.id} : concept inexistant ${a.concept}` });
+      }
+    });
+    if (new Set(p.applications.map((a) => a.concept)).size !== p.applications.length) {
+      errors.push({ file: PRINCIPLES_FILE, path: `${i}.applications`, message: `${p.id} : concept cité deux fois` });
+    }
+  });
+
+  // Identifiants uniques entre fiches, familles et principes
+  const extraIds = [...content.families.map((f) => ({ id: f.id, file: FAMILIES_FILE })), ...content.principles.map((p) => ({ id: p.id, file: PRINCIPLES_FILE }))];
+  for (const { id, file } of extraIds) {
+    if (!ID_PATTERN.test(id)) errors.push({ file, path: 'id', message: `identifiant « ${id} » invalide` });
+    if (RESERVED_IDS.includes(id)) errors.push({ file, path: 'id', message: `identifiant « ${id} » réservé` });
+    if (seen.has(id)) errors.push({ file, path: 'id', message: `identifiant « ${id} » déjà utilisé` });
+    seen.add(id);
+  }
+
   const cycle = findPrerequisiteCycle(sheets);
   if (cycle) {
     const first = sheets.find((s) => s.id === cycle[0])!;

@@ -1,4 +1,4 @@
-import { buildGraph, CONCEPTS_ID, ROOT_ID, SECTORS_ID } from '../../content/graph';
+import { buildGraph, CONCEPTS_ID, PRINCIPLES_ID, ROOT_ID, SECTORS_ID } from '../../content/graph';
 import { makeContent } from '../../../tests/fixtures/content';
 import { focusSet, focusZoom, FOCUS_MAX_ZOOM, FOCUS_MIN_ZOOM } from './focus';
 import { layoutGraph } from './layout';
@@ -8,8 +8,8 @@ const positions = layoutGraph(graph);
 
 describe('mode focus mobile', () => {
   test('C25 — le voisinage net contient le nœud, son parent, ses enfants et ses nœuds reliés', () => {
-    expect([...focusSet(graph, 'event-sourcing')].sort()).toEqual(['banque', CONCEPTS_ID, 'cqrs', 'event-sourcing']);
-    expect([...focusSet(graph, ROOT_ID)].sort()).toEqual([CONCEPTS_ID, ROOT_ID, SECTORS_ID]);
+    expect([...focusSet(graph, 'event-sourcing')].sort()).toEqual(['banque', 'cqrs', 'donnees', 'event-sourcing', 'lecture-ecriture']);
+    expect([...focusSet(graph, ROOT_ID)].sort()).toEqual([CONCEPTS_ID, PRINCIPLES_ID, ROOT_ID, SECTORS_ID]);
   });
 
   test('C29 — le zoom du focus ne descend jamais sous le minimum qui garde 44 px', () => {

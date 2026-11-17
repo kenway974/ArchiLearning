@@ -50,6 +50,30 @@ describe('contenu réel de la V1', () => {
     expect(sheetFiles('sectors')).toEqual(content.sectors.map((s) => s.id).sort());
   });
 
+  test('C72 — les cinq familles de concepts de la V1', () => {
+    expect(content.families.map((f) => f.title)).toEqual([
+      'Organiser le code',
+      'Protéger le métier',
+      'Lecture et historique',
+      'Découper et déployer',
+      'Circuler et étendre',
+    ]);
+  });
+
+  test('C73 — les neuf principes partagés de la V1', () => {
+    expect(content.principles.map((p) => p.id)).toEqual([
+      'separation-des-responsabilites',
+      'inversion-des-dependances',
+      'decoupage-par-domaine',
+      'decoupage-par-cas-dusage',
+      'separer-lecture-ecriture',
+      'communication-par-evenements',
+      'composition-dunites',
+      'coherence-a-terme',
+      'un-seul-deploiement',
+    ]);
+  });
+
   test('C65 — le lien Banque → Event Sourcing cité dans le cahier des charges existe', () => {
     expect(content.links.map((l) => l.id)).toContain('banque-fintech--event-sourcing');
   });

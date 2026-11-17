@@ -1,4 +1,12 @@
-import { buildGraph, getBreadcrumb, getNeighborhood, CONCEPTS_ID, ROOT_ID, SECTORS_ID } from './graph';
+import {
+  buildGraph,
+  getBreadcrumb,
+  getNeighborhood,
+  CONCEPTS_ID,
+  PRINCIPLES_ID,
+  ROOT_ID,
+  SECTORS_ID,
+} from './graph';
 import { makeContent } from '../../tests/fixtures/content';
 
 const graph = () => buildGraph(makeContent());
@@ -16,23 +24,48 @@ describe('construction du graphe', () => {
     expect(g.nodes.find((n) => n.id === SECTORS_ID)).toMatchObject({ type: 'branch', label: 'Secteurs', parentId: ROOT_ID });
   });
 
-  test('C14 — un nœud par fiche, rattaché à sa branche, avec le titre de la fiche', () => {
+  test('C14 — un nœud par fiche, avec le titre de la fiche ; les secteurs sont rattachés à leur branche', () => {
     const g = graph();
-    const concepts = g.nodes.filter((n) => n.type === 'concept');
-    const sectors = g.nodes.filter((n) => n.type === 'sector');
-    expect(ids(concepts)).toEqual(['couches', 'cqrs', 'ddd', 'event-sourcing']);
-    expect(ids(sectors)).toEqual(['banque', 'vitrine']);
-    expect(concepts.every((n) => n.parentId === CONCEPTS_ID)).toBe(true);
-    expect(sectors.every((n) => n.parentId === SECTORS_ID)).toBe(true);
+    expect(ids(g.nodes.filter((n) => n.type === 'concept'))).toEqual(['couches', 'cqrs', 'ddd', 'event-sourcing']);
+    expect(ids(g.nodes.filter((n) => n.type === 'sector'))).toEqual(['banque', 'vitrine']);
+    expect(g.nodes.filter((n) => n.type === 'sector').every((n) => n.parentId === SECTORS_ID)).toBe(true);
     expect(g.nodes.find((n) => n.id === 'cqrs')?.label).toBe('CQRS');
-    expect(g.nodes).toHaveLength(3 + 4 + 2);
   });
 
-  test('C14 — une arête d’arbre relie chaque nœud à son parent', () => {
+  test('C72 — chaque concept est rattaché à sa famille, chaque famille à la branche Concepts', () => {
+    const g = graph();
+    const families = g.nodes.filter((n) => n.type === 'family');
+    expect(ids(families)).toEqual(['donnees', 'metier', 'organiser']);
+    expect(families.every((f) => f.parentId === CONCEPTS_ID)).toBe(true);
+    expect(g.nodes.find((n) => n.id === 'cqrs')?.parentId).toBe('donnees');
+    expect(g.nodes.find((n) => n.id === 'donnees')?.label).toBe('Famille donnees');
+  });
+
+  test('C14 — une arête d’arbre relie chaque nœud de l’arbre à son parent', () => {
     const tree = graph().edges.filter((e) => e.type === 'tree');
-    expect(tree).toHaveLength(2 + 4 + 2);
-    expect(tree).toContainEqual(expect.objectContaining({ source: CONCEPTS_ID, target: 'cqrs' }));
+    expect(tree).toContainEqual(expect.objectContaining({ source: 'donnees', target: 'cqrs' }));
+    expect(tree).toContainEqual(expect.objectContaining({ source: CONCEPTS_ID, target: 'donnees' }));
     expect(tree).toContainEqual(expect.objectContaining({ source: ROOT_ID, target: SECTORS_ID }));
+    // racine → 2 branches, Concepts → 3 familles, familles → 4 concepts, Secteurs → 2 secteurs
+    expect(tree).toHaveLength(2 + 3 + 4 + 2);
+  });
+
+  test('C73 — les principes sont des nœuds d’un groupe « Principes partagés », reliés à chaque concept qui les applique', () => {
+    const g = graph();
+    expect(g.nodes.find((n) => n.id === PRINCIPLES_ID)).toMatchObject({ type: 'principles', label: 'Principes partagés' });
+    expect(g.nodes.filter((n) => n.type === 'principle').map((n) => [n.id, n.parentId])).toEqual([
+      ['separation', PRINCIPLES_ID],
+      ['lecture-ecriture', PRINCIPLES_ID],
+    ]);
+    const edges = g.edges.filter((e) => e.type === 'principle');
+    expect(edges.map((e) => `${e.source}->${e.target}`).sort()).toEqual([
+      'lecture-ecriture->cqrs',
+      'lecture-ecriture->event-sourcing',
+      'separation->couches',
+      'separation->ddd',
+    ]);
+    // le groupe des principes n'est pas relié par une arête qui traverserait la carte
+    expect(g.edges.some((e) => e.target === PRINCIPLES_ID || e.source === PRINCIPLES_ID)).toBe(false);
   });
 
   test('C15 — chaque lien transverse devient une arête étiquetée par son titre', () => {
@@ -58,25 +91,33 @@ describe('construction du graphe', () => {
 });
 
 describe('voisinage d’un nœud', () => {
-  test('C17 — parent, enfants et nœuds reliés d’une fiche', () => {
+  test('C17 — parent, enfants et nœuds reliés d’un concept (liens et principes)', () => {
     expect(getNeighborhood(graph(), 'event-sourcing')).toEqual({
-      parent: CONCEPTS_ID,
+      parent: 'donnees',
       children: [],
-      related: ['banque', 'cqrs'],
+      related: ['banque', 'cqrs', 'lecture-ecriture'],
     });
   });
 
-  test('C17 — voisinage d’une branche : la racine et ses fiches', () => {
+  test('C17 — voisinage d’un principe : les concepts qui l’appliquent', () => {
+    expect(getNeighborhood(graph(), 'lecture-ecriture')).toEqual({
+      parent: PRINCIPLES_ID,
+      children: [],
+      related: ['cqrs', 'event-sourcing'],
+    });
+  });
+
+  test('C17 — voisinage d’une branche : la racine et ses familles', () => {
     const n = getNeighborhood(graph(), CONCEPTS_ID);
     expect(n.parent).toBe(ROOT_ID);
-    expect([...n.children].sort()).toEqual(['couches', 'cqrs', 'ddd', 'event-sourcing']);
+    expect([...n.children].sort()).toEqual(['donnees', 'metier', 'organiser']);
     expect(n.related).toEqual([]);
   });
 
-  test('C17 — voisinage de la racine : pas de parent, les deux branches', () => {
+  test('C17 — voisinage de la racine : pas de parent, les branches', () => {
     expect(getNeighborhood(graph(), ROOT_ID)).toEqual({
       parent: null,
-      children: [CONCEPTS_ID, SECTORS_ID],
+      children: [CONCEPTS_ID, SECTORS_ID, PRINCIPLES_ID],
       related: [],
     });
   });
@@ -87,12 +128,17 @@ describe('voisinage d’un nœud', () => {
 });
 
 describe('fil d’Ariane', () => {
-  test('C26 — le fil d’Ariane d’une fiche part de la racine', () => {
+  test('C26 — le fil d’Ariane d’un concept passe par sa famille', () => {
     expect(getBreadcrumb(graph(), 'cqrs')).toEqual([
       { id: ROOT_ID, label: 'Architectures logicielles' },
       { id: CONCEPTS_ID, label: 'Concepts' },
+      { id: 'donnees', label: 'Famille donnees' },
       { id: 'cqrs', label: 'CQRS' },
     ]);
+  });
+
+  test('C26 — le fil d’Ariane d’un principe', () => {
+    expect(getBreadcrumb(graph(), 'separation').map((c) => c.id)).toEqual([ROOT_ID, PRINCIPLES_ID, 'separation']);
   });
 
   test('C26 — le fil d’Ariane de la racine ne contient qu’elle', () => {
