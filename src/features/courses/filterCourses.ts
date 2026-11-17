@@ -12,9 +12,9 @@ export const normalize = (s: string) =>
 const treeText = (nodes: TreeNode[]): string[] =>
   nodes.flatMap((n) => [n.name, n.role, ...treeText(n.children ?? [])]);
 
-/** Texte sur lequel porte la recherche : titre, idée et contenu de la fiche (hors quiz, prérequis et post). */
+/** Texte sur lequel porte la recherche : identifiant, titre, idée et contenu de la fiche (hors quiz, prérequis et post). */
 function searchableText(sheet: Sheet): string {
-  const common = [sheet.title, sheet.summary, ...sheet.pitfalls, ...treeText(sheet.tree)];
+  const common = [sheet.id, sheet.title, sheet.summary, ...sheet.pitfalls, ...treeText(sheet.tree)];
   const specific =
     sheet.kind === 'concept'
       ? [sheet.problem, ...sheet.whenToUse, ...sheet.whenToAvoid, sheet.teamSize]
