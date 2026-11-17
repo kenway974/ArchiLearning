@@ -33,12 +33,25 @@ export function link(id: string) {
   return found;
 }
 
+export function familyOf(conceptId: string) {
+  const found = content.families.find((f) => f.concepts.includes(conceptId));
+  if (!found) throw new Error(`Concept sans famille : ${conceptId}`);
+  return found;
+}
+
+export function principle(id: string) {
+  const found = content.principles.find((p) => p.id === id);
+  if (!found) throw new Error(`Principe inconnu : ${id}`);
+  return found;
+}
+
 /** Fiches de référence utilisées par les tests. */
 export const IDS = {
   concept: 'cqrs',
   conceptSansPrerequis: 'transaction-script',
   sector: 'banque-fintech',
   link: 'banque-fintech--event-sourcing',
+  principle: 'separer-lecture-ecriture',
 } as const;
 
 export const isMobile = (testInfo: TestInfo) => testInfo.project.name === 'mobile';

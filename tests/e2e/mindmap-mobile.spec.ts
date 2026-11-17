@@ -3,6 +3,7 @@ import { content } from '../../src/content/index';
 import {
   IDS,
   centerOf,
+  familyOf,
   link,
   linkLabel,
   mapNode,
@@ -41,10 +42,12 @@ async function expectCentered(node: Locator) {
   expect(c.y).toBeLessThan(VIEW.height * 0.65);
 }
 
-/** Va jusqu'à la fiche CQRS en touchant la carte : racine → Concepts → CQRS. */
+/** Va jusqu'à la fiche CQRS en touchant la carte : racine → Concepts → famille → CQRS. */
 async function focusConcept(page: Page) {
   await openMap(page);
   await mapNode(page, 'concepts').tap();
+  await waitForViewportStable(page);
+  await mapNode(page, familyOf(IDS.concept).id).tap();
   await waitForViewportStable(page);
   const node = mapNode(page, IDS.concept);
   await expect(node).toBeInViewport();
@@ -91,7 +94,7 @@ test.describe('Mindmap — mobile', () => {
     await expect(mapNode(page, 'concepts')).toHaveAttribute('data-focused', 'true');
     await expectCentered(mapNode(page, 'concepts'));
     await expect(mapNode(page, 'root')).toHaveAttribute('data-dimmed', 'false'); // parent
-    await expect(mapNode(page, content.concepts[0]!.id)).toHaveAttribute('data-dimmed', 'false'); // enfant
+    await expect(mapNode(page, content.families[0]!.id)).toHaveAttribute('data-dimmed', 'false'); // enfant
     await expect(mapNode(page, content.sectors[0]!.id)).toHaveAttribute('data-dimmed', 'true'); // hors voisinage
   });
 
@@ -106,7 +109,12 @@ test.describe('Mindmap — mobile', () => {
   test('C26 — le fil d’Ariane montre le chemin et permet de remonter', async ({ page }) => {
     await focusConcept(page);
     const crumbs = breadcrumb(page);
-    await expect(crumbs.getByRole('button')).toHaveText(['Architectures logicielles', 'Concepts', sheet(IDS.concept).title]);
+    await expect(crumbs.getByRole('button')).toHaveText([
+      'Architectures logicielles',
+      'Concepts',
+      familyOf(IDS.concept).title,
+      sheet(IDS.concept).title,
+    ]);
     await expect(crumbs.getByRole('button', { name: sheet(IDS.concept).title })).toHaveAttribute('aria-current', 'location');
 
     await sheetPanel(page, sheet(IDS.concept).title).getByRole('button', { name: 'Fermer' }).tap();

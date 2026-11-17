@@ -4,6 +4,7 @@ import { IDS, link, openSheetFromMap, press, sheet } from './helpers';
 
 const CONCEPT_SECTIONS = [
   'Idée',
+  'Principes appliqués',
   'Problème résolu',
   'Quand l’utiliser',
   'Quand l’éviter',

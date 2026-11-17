@@ -8,7 +8,9 @@
 import type {
   ConceptSheet,
   Content,
+  Family,
   Link,
+  Principle,
   QuizQuestion,
   SectorSheet,
   TreeNode,
@@ -112,6 +114,22 @@ export function makeLink(source: string, target: string, overrides: Partial<Link
   };
 }
 
+export function makeFamily(id: string, concepts: string[], overrides: Partial<Family> = {}): Family {
+  return { id, title: `Famille ${id}`, concepts, ...overrides };
+}
+
+export function makePrinciple(id: string, concepts: string[], overrides: Partial<Principle> = {}): Principle {
+  return {
+    id,
+    title: `Principe ${id}`,
+    summary: `Le principe ${id} en une phrase.`,
+    why: `Pourquoi le principe ${id} compte.`,
+    color: '#2b59c3',
+    applications: concepts.map((concept) => ({ concept, how: `Comment ${concept} applique ${id}.` })),
+    ...overrides,
+  };
+}
+
 /**
  * Petit contenu cohérent :
  *   couches ← ddd ← cqrs ← event-sourcing   (chaîne de prérequis)
@@ -159,5 +177,14 @@ export function makeContent(): Content {
     concepts: [couches, ddd, cqrs, eventSourcing],
     sectors: [banque, vitrine],
     links: [makeLink('banque', 'event-sourcing'), makeLink('cqrs', 'event-sourcing')],
+    families: [
+      makeFamily('organiser', ['couches']),
+      makeFamily('metier', ['ddd']),
+      makeFamily('donnees', ['cqrs', 'event-sourcing']),
+    ],
+    principles: [
+      makePrinciple('separation', ['couches', 'ddd']),
+      makePrinciple('lecture-ecriture', ['cqrs', 'event-sourcing']),
+    ],
   };
 }
